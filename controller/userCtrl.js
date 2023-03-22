@@ -60,7 +60,7 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
   //find refresh Token in cookies
   const cookie = req.cookies;
   if (!cookie?.refreshToken) {
-    throw new Error("There is no Refresh Token in cookies");
+    throw new Error("There is No Refresh Token in Cookies");
   };
   const refreshToken = cookie.refreshToken;
 
@@ -76,6 +76,32 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
     res.json({ accessToken });
   });
 } )
+
+
+//SignOut a User
+const signOutUserCtrl = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken) throw new Error("There is No Refresh Token in Cookies");
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+  //clear cookie if not user
+  if (!user) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+    });
+    return res.sendStatus(204); // forbidden
+  }
+  //Update refreshToken to blank
+  await User.findOneAndUpdate(refreshToken, {
+    refreshToken: "",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+  res.sendStatus(204); // forbidden
+});
 
 //To get all Users
 const getAllUser = asyncHandler(async (req, res) => {
@@ -183,4 +209,5 @@ module.exports = {
   blockUser,
   unblockUser,
   handleRefreshToken,
+  signOutUserCtrl,
 };
