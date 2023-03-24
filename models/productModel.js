@@ -23,13 +23,13 @@ var productSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
+      required: true
+      // ref: "Category"
     },
     brand: {
       type: String,
-      enum: ["Apple", "Bose", "Samsung"],
-      // required: true,
+      required: true,
     },
     quantity: {
       type: Number,
@@ -40,11 +40,13 @@ var productSchema = new mongoose.Schema(
     },
     colour: {
       type: String,
-      enum: ["Black", "Brown", "Red"],
+      required: true,
     },
     sold: {
       type: Number,
       default: 0,
+      //To hide this data in api use select: false
+      // select: false 
     },
     ratings: [
       {
